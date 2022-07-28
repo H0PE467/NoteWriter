@@ -4,6 +4,7 @@ let saveNoteBtn;
 let newNoteBtn;
 let noteList;
 
+
 if (window.location.pathname === '/notes') {
   noteTitle = document.querySelector('.note-title');
   noteText = document.querySelector('.note-textarea');
@@ -25,16 +26,16 @@ const hide = (elem) => {
 // activeNote is used to keep track of the note in the textarea
 let activeNote = {};
 
-const getNotes = () =>
-  fetch('/api/notes', {
+const getNotes = async() =>
+  await fetch('/api/notes', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
   });
 
-const saveNote = (note) =>
-  fetch('/api/notes', {
+const saveNote = async(note) =>
+  await fetch('/api/notes', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -42,18 +43,19 @@ const saveNote = (note) =>
     body: JSON.stringify(note),
   });
 
-const deleteNote = (id) =>
-  fetch(`/api/notes/${id}`, {
+const deleteNote = async(content) =>
+  await fetch(`/api/notes/`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
     },
+    body: JSON.stringify(content),
   });
 
 const renderActiveNote = () => {
   hide(saveNoteBtn);
 
-  if (activeNote.id) {
+  if (Object.entries(activeNote).length != 0) {
     noteTitle.setAttribute('readonly', true);
     noteText.setAttribute('readonly', true);
     noteTitle.value = activeNote.title;
@@ -63,14 +65,14 @@ const renderActiveNote = () => {
     noteText.removeAttribute('readonly');
     noteTitle.value = '';
     noteText.value = '';
+
   }
 };
 
 const handleNoteSave = () => {
   const newNote = {
     title: noteTitle.value,
-    text: noteText.value,
-  };
+    text: noteText.value};
   saveNote(newNote).then(() => {
     getAndRenderNotes();
     renderActiveNote();
@@ -82,14 +84,11 @@ const handleNoteDelete = (e) => {
   // Prevents the click listener for the list from being called when the button inside of it is clicked
   e.stopPropagation();
 
-  const note = e.target;
-  const noteId = JSON.parse(note.parentElement.getAttribute('data-note')).id;
+  const content = JSON.parse(e.target.parentElement.getAttribute('data-note'));
 
-  if (activeNote.id === noteId) {
-    activeNote = {};
-  }
+  activeNote = {};
 
-  deleteNote(noteId).then(() => {
+  deleteNote(content).then(() => {
     getAndRenderNotes();
     renderActiveNote();
   });
