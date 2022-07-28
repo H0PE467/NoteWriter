@@ -10,8 +10,7 @@ The notes are stored in a database, therefore they can be later retrieved.
 This project uses Express to connect the routes and database.
 
 ## Link
-https://github.com/H0PE467/NoteWriter
-
+https://note-writer-h0pe467.herokuapp.com/
 
 ## Screenshot
 
